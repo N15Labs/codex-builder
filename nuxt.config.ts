@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/image',
     '@vueuse/nuxt',
+    '@pinia/nuxt', 
     [
       '@nuxtjs/color-mode',
       {
@@ -40,4 +41,15 @@ export default defineNuxtConfig({
       }
     ]
   },
+
+  pinia: {},
+  imports: {
+    autoImport: true
+  },
+
+  vite: {
+    define: {
+      'process.env.DEBUG': false
+    }
+  }
 })
