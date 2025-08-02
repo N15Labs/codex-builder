@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useItemStore = defineStore('item', {
+export const useItemStore = defineStore('items', {
   state: () => ({
     items: [] as {
       id: string
@@ -18,16 +18,19 @@ export const useItemStore = defineStore('item', {
     addEntity(item: any) {
       this.items.push(item)
     },
-    editEntity(name: string, updated: any) {
-      const index = this.items.findIndex(i => i.name === name)
+    editEntity(id: string, updated: any) {
+      const index = this.items.findIndex(i => i.id === id)
       if (index !== -1) {
         this.items[index] = { ...this.items[index], ...updated }
       }
     },
-    removeEntity(name: string) {
-      this.items = this.items.filter(i => i.name !== name)
+    removeEntity(id: string) {
+      this.items = this.items.filter(i => i.id !== id)
+    },
+    getEntityById(id: string) {
+      return this.items.find(item => item.id === id)
     }
   },
 
-  persist: true
+  persist: process.client ? true : false
 })

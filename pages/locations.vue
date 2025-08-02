@@ -1,23 +1,25 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useLocationStore } from '@/stores/useLocationStore'
 import { useTagStore } from '@/stores/useTagStore'
 import LocationForm from '@/components/forms/LocationForm.vue'
+import LocationCard from '@/components/cards/LocationCard.vue'
+
 
 const locationStore = useLocationStore()
 const tagStore = useTagStore()
 
-let exportCodex = () => {}
-if (process.client) {
-  const mod = await import('@/composables/useExportCodex')
-  exportCodex = mod.useCodexImportExport().exportCodex
-}
-
 const showModal = ref(false)
 const activeLocation = ref<any | null>(null)
 
+const exportCodex = ref<() => void>(() => {})
+onMounted(async () => {
+  const mod = await import('@/composables/useExportCodex')
+  exportCodex.value = mod.useCodexImportExport().exportCodex
+})
+
 const openCreateModal = () => {
-  activeLocation.value = { name: '', tags: [] }
+  activeLocation.value = { id: crypto.randomUUID(), name: '', tags: [] }
   showModal.value = true
 }
 
@@ -27,9 +29,9 @@ const openEditModal = (loc: any) => {
 }
 
 const saveLocation = (entity: any) => {
-  const exists = locationStore.locations.find(l => l.name === entity.name)
+  const exists = locationStore.locations.find(l => l.id === entity.id)
   if (exists) {
-    locationStore.editEntity(entity.name, entity)
+    locationStore.editEntity(entity.id, entity)
   } else {
     locationStore.addEntity(entity)
   }
@@ -37,8 +39,9 @@ const saveLocation = (entity: any) => {
 }
 
 const filteredLocations = computed(() => {
-  if (tagStore.activeTags.length === 0) return locationStore.locations
-  return locationStore.locations.filter(loc =>
+  const locations = locationStore.locations ?? []
+  if (tagStore.activeTags.length === 0) return locations
+  return locations.filter(loc =>
     loc.tags?.some(tag => tagStore.activeTags.includes(tag))
   )
 })
@@ -62,7 +65,7 @@ const filteredLocations = computed(() => {
       <template #default="{ entities }">
         <LocationCard
           v-for="loc in entities"
-          :key="loc.name"
+          :key="loc.id"
           :location="loc"
           @click="openEditModal(loc)"
         />

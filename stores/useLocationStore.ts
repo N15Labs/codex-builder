@@ -20,8 +20,8 @@ export const useLocationStore = defineStore('location', {
     addEntity(location: any) {
       this.locations.push(location)
     },
-    editEntity(name: string, updated: any) {
-      const index = this.locations.findIndex(l => l.name === name)
+    editEntity(id: string, updated: any) {
+      const index = this.locations.findIndex(l => l.id === id)
       if (index !== -1) {
         this.locations[index] = { ...this.locations[index], ...updated }
       }

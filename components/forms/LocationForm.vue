@@ -19,7 +19,8 @@ const LocationSchema = z.object({
 })
 
 const model = ref({
-  baseForGroupId: '', 
+  id: props.entity?.id || crypto.randomUUID(), 
+  baseForGroupId: '',
   ...props.entity
 })
 

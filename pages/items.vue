@@ -10,8 +10,15 @@ const tagStore = useTagStore()
 const showModal = ref(false)
 const activeItem = ref<any | null>(null)
 
+const exportCodex = ref<() => void>(() => {})
+onMounted(async () => {
+  console.log('[Items.vue] Restored items:', itemStore.items)
+  const mod = await import('@/composables/useExportCodex')
+  exportCodex.value = mod.useCodexImportExport().exportCodex
+})
+
 const openCreateModal = () => {
-  activeItem.value = { name: '', tags: [] }
+  activeItem.value = { name: '', tags: [] } // ✅ No ID yet
   showModal.value = true
 }
 
@@ -21,27 +28,31 @@ const openEditModal = (item: any) => {
 }
 
 const saveItem = (entity: any) => {
-  const exists = itemStore.items.find(i => i.name === entity.name)
-  if (exists) {
-    itemStore.editEntity(entity.name, entity)
+  const existing = itemStore.items.find(i => i.id === entity.id)
+
+  if (existing) {
+    itemStore.editEntity(entity.id, entity)
   } else {
+    entity.id = entity.id || crypto.randomUUID()
     itemStore.addEntity(entity)
   }
+
   showModal.value = false
 }
 
 const filteredItems = computed(() => {
   const items = itemStore.items ?? []
-  if (tagStore.activeTags.length === 0) return items
+
+  // 🧪 DEBUG: Show items + active tag state
+  console.log('[Items.vue] Items in store:', items)
+  console.log('[Items.vue] Active tags:', tagStore.activeTags)
+
+  // 🔧 Safe fallback if tag filters are empty or invalid
+  if (!Array.isArray(tagStore.activeTags) || tagStore.activeTags.length === 0) return items
+
   return items.filter(i =>
     i.tags?.some(tag => tagStore.activeTags.includes(tag))
   )
-})
-
-const exportCodex = ref<() => void>(() => {})
-onMounted(async () => {
-  const mod = await import('@/composables/useExportCodex')
-  exportCodex.value = mod.useCodexImportExport().exportCodex
 })
 </script>
 
@@ -52,16 +63,19 @@ onMounted(async () => {
 
     <TagFilter class="mb-4" />
 
+    <!-- ✅ Debug: Show item count -->
+    <p class="text-xs text-zinc-400">Showing {{ filteredItems.length }} item(s)</p>
+
     <CodexView
       title="Items"
       :entities="filteredItems"
       :onCreate="openCreateModal"
-      :onExport="exportCodex.value"
+      :onExport="exportCodex"
     >
       <template #default="{ entities }">
         <ItemCard
           v-for="item in entities"
-          :key="item.name"
+          :key="item.id"
           :item="item"
           @click="openEditModal(item)"
         />
