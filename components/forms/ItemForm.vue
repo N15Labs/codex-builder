@@ -3,50 +3,32 @@ import { ref } from 'vue'
 import { z } from 'zod'
 import BaseSelect from '@/components/ui/BaseSelect.vue'
 import { useCharacterStore } from '@/stores/useCharacterStore'
-import { useGroupStore } from '@/stores/useGroupStore'
 import { useLocationStore } from '@/stores/useLocationStore'
-
-const characterStore = useCharacterStore()
-const groupStore = useGroupStore()
-const locationStore = useLocationStore()
 
 const emit = defineEmits(['submit', 'close'])
 const props = defineProps({ entity: Object })
 
+const characterStore = useCharacterStore()
+const locationStore = useLocationStore()
+
 const ItemSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, 'Item name required'),
+  name: z.string().min(1, 'Name is required'),
+  description: z.string().optional(),
   type: z.string().optional(),
-  history: z.union([z.string(), z.array(z.string())]).optional(),
   tags: z.array(z.string()).optional(),
-  ownerType: z.enum(['character', 'group']).optional(),
   ownerId: z.string().optional(),
-  locationId: z.string().optional()
+  originId: z.string().optional()
 })
 
 const model = ref({
-  id: props.entity?.id || crypto.randomUUID(),
-  ownerType: 'character',
   ownerId: '',
-  locationId: '',
-  name: '',
-  type: '',
-  history: '',
-  tags: [],
+  originId: '',
   ...props.entity
 })
 
 const handleSubmit = () => {
-  // Handle tags conversion if it's a string
-  if (typeof model.value.tags === 'string') {
-    model.value.tags = model.value.tags.split(',').map(t => t.trim()).filter(Boolean)
-  }
-  
   const result = ItemSchema.safeParse(model.value)
-  if (!result.success) {
-    alert(result.error.errors[0].message)
-    return
-  }
+  if (!result.success) return alert(result.error.errors[0].message)
   emit('submit', result.data)
 }
 </script>
@@ -54,13 +36,15 @@ const handleSubmit = () => {
 <template>
   <div class="modal">
     <div class="modal-box space-y-4">
-      <h2 class="text-xl font-bold">New Item</h2>
+      <h2 class="text-xl font-bold">
+        {{ model.id ? 'Edit Item' : 'New Item' }}
+      </h2>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Item Name</label>
+        <label class="block text-sm font-medium mb-1">Name</label>
         <input
           v-model="model.name"
-          placeholder="Item Name"
+          placeholder="Item name"
           class="w-full px-3 py-2 border rounded text-black dark:text-white bg-white dark:bg-zinc-900"
         />
       </div>
@@ -69,16 +53,16 @@ const handleSubmit = () => {
         <label class="block text-sm font-medium mb-1">Type</label>
         <input
           v-model="model.type"
-          placeholder="Type"
+          placeholder="e.g. Weapon, Artifact"
           class="w-full px-3 py-2 border rounded text-black dark:text-white bg-white dark:bg-zinc-900"
         />
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">History / Lore</label>
+        <label class="block text-sm font-medium mb-1">Description</label>
         <textarea
-          v-model="model.history"
-          placeholder="History or Lore"
+          v-model="model.description"
+          placeholder="Item description"
           class="w-full px-3 py-2 border rounded text-black dark:text-white bg-white dark:bg-zinc-900"
         />
       </div>
@@ -87,56 +71,31 @@ const handleSubmit = () => {
         <label class="block text-sm font-medium mb-1">Tags</label>
         <input
           v-model="model.tags"
-          placeholder="Tags (comma-separated)"
+          placeholder="Comma-separated tags"
           @blur="model.tags = model.tags?.split(',').map(t => t.trim())"
           class="w-full px-3 py-2 border rounded text-black dark:text-white bg-white dark:bg-zinc-900"
         />
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Owned By</label>
-        <BaseSelect
-          v-model="model.ownerType"
-          :options="[
-            { id: 'character', name: 'Character' },
-            { id: 'group', name: 'Group' }
-          ]"
-          option-label="name"
-          option-value="id"
-          placeholder="Select owner type"
-        />
-      </div>
-
-      <div class="mb-4" v-if="model.ownerType === 'character'">
-        <label class="block text-sm font-medium mb-1">Character</label>
+        <label class="block text-sm font-medium mb-1">Owner (Character)</label>
         <BaseSelect
           v-model="model.ownerId"
           :options="characterStore.characters"
           option-label="name"
           option-value="id"
-          placeholder="Select character"
-        />
-      </div>
-
-      <div class="mb-4" v-else-if="model.ownerType === 'group'">
-        <label class="block text-sm font-medium mb-1">Group</label>
-        <BaseSelect
-          v-model="model.ownerId"
-          :options="groupStore.groups"
-          option-label="name"
-          option-value="id"
-          placeholder="Select group"
+          placeholder="Select an owner"
         />
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Found At Location</label>
+        <label class="block text-sm font-medium mb-1">Origin (Location)</label>
         <BaseSelect
-          v-model="model.locationId"
+          v-model="model.originId"
           :options="locationStore.locations"
           option-label="name"
           option-value="id"
-          placeholder="Select location (optional)"
+          placeholder="Select a location"
         />
       </div>
 

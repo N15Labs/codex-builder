@@ -5,12 +5,11 @@ export const useItemStore = defineStore('items', {
     items: [] as {
       id: string
       name: string
+      description?: string
       type?: string
-      history?: string | string[]
       tags?: string[]
-      ownerType?: 'character' | 'group'
       ownerId?: string
-      locationId?: string
+      originId?: string
     }[]
   }),
 
@@ -26,11 +25,8 @@ export const useItemStore = defineStore('items', {
     },
     removeEntity(id: string) {
       this.items = this.items.filter(i => i.id !== id)
-    },
-    getEntityById(id: string) {
-      return this.items.find(item => item.id === id)
     }
   },
 
-  persist: process.client ? true : false
+  persist: process.client ? { storage: localStorage } : false
 })
