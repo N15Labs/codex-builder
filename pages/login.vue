@@ -1,120 +1,51 @@
 <template>
-  <section class="auth-page">
-    <h1>Welcome Back 👋</h1>
-    <p class="subheading">Log in to access your Codex</p>
+  <div class="min-h-screen flex items-center justify-center bg-zinc-100 px-4">
+    <div class="w-full max-w-md bg-white/60 backdrop-blur shadow-lg rounded-2xl p-8 space-y-6 border border-zinc-200">
+      <h1 class="text-2xl font-bold text-center text-zinc-800">Welcome back 👋</h1>
 
-    <form @submit.prevent="handleLogin" class="auth-form">
-      <input v-model="email" placeholder="Email" type="email" required />
-      <input v-model="password" placeholder="Password" type="password" required />
-      <button type="submit" class="cta">Login</button>
-    </form>
+      <form @submit.prevent="handleLogin" class="space-y-4">
+        <input
+          v-model="email"
+          type="email"
+          placeholder="Email"
+          class="w-full px-4 py-2 rounded-xl border border-zinc-300 bg-white text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          class="w-full px-4 py-2 rounded-xl border border-zinc-300 bg-white text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+        <button
+          type="submit"
+          class="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition-colors"
+        >
+          Sign in
+        </button>
+        <p v-if="error" class="text-sm text-red-500 text-center">{{ error }}</p>
+      </form>
 
-    <button @click="handleGoogleLogin" class="cta secondary google-button">
-      <img src="@/assets/google-logo.svg" alt="Google" class="icon" /> Continue with Google
-    </button>
-
-    <p v-if="error" class="error-msg">{{ error }}</p>
-
-    <p class="auth-switch">
-      Don’t have an account?
-      <router-link to="/register" class="switch-link">Register here</router-link>
-    </p>
-  </section>
+      <p class="text-sm text-center text-zinc-600">
+        Don’t have an account?
+        <NuxtLink to="/register" class="text-purple-600 hover:underline">Register</NuxtLink>
+      </p>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useAuth } from '@/composables/useAuth'
-
 const email = ref('')
 const password = ref('')
 const error = ref('')
-const { login, loginWithGoogle } = useAuth()
+const { login } = useAuth()
 
 const handleLogin = async () => {
   try {
+    error.value = ''
     await login(email.value, password.value)
-    await navigateTo('/')
-  } catch (err: any) {
-    error.value = err.message
-  }
-}
-
-const handleGoogleLogin = async () => {
-  try {
-    await loginWithGoogle()
-    await navigateTo('/')
-  } catch (err: any) {
-    error.value = err.message
+    navigateTo('/')
+  } catch (err) {
+    error.value = 'Invalid credentials'
   }
 }
 </script>
-<style scoped>
-.auth-page {
-  max-width: 480px;
-  margin: 5rem auto;
-  padding: 2.5rem;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
-  text-align: center;
-}
-
-.auth-page h1 {
-  font-size: 2.4rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.subheading {
-  font-size: 1.25rem;
-  color: #444;
-  margin-bottom: 2rem;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.auth-form input {
-  padding: 0.8rem 1rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  width: 100%;
-}
-
-.google-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-.google-button .icon {
-  width: 20px;
-  height: 20px;
-}
-
-.error-msg {
-  margin-top: 1rem;
-  color: #c0392b;
-  font-weight: 600;
-}
-
-.auth-switch {
-  margin-top: 1.5rem;
-  font-size: 1rem;
-  color: #333;
-}
-
-.switch-link {
-  font-weight: bold;
-  color: #407ba7;
-  text-decoration: underline;
-}
-</style>

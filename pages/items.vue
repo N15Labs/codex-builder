@@ -41,9 +41,11 @@ const handleSubmit = (entity: any) => {
 
 const filteredItems = computed(() => {
   const items = itemStore.items ?? []
-  if (tagStore.activeTags.length === 0) return items
-  return items.filter(item =>
-    item.tags?.some(tag => tagStore.activeTags.includes(tag))
+  const active = tagStore.activeTags.items
+  if (!active?.length) return items
+
+  return items.filter(i =>
+    i.tags?.some(tag => active.includes(tag))
   )
 })
 </script>
@@ -53,9 +55,11 @@ const filteredItems = computed(() => {
     <h2 class="text-3xl font-lore font-bold">🧰 Items</h2>
     <p class="text-zinc-500 dark:text-zinc-400">Weapons, relics, artefacts, etc.</p>
 
-    <TagFilter class="mb-4" />
+    <ClientOnly>
+      <TagFilter category="items" class="mb-4" />
+    </ClientOnly>
 
-    <CodexView
+  <CodexView
       title="Items"
       :entities="filteredItems"
       :onCreate="openCreateModal"
@@ -69,7 +73,7 @@ const filteredItems = computed(() => {
           @click="openEditModal(item)"
         />
       </template>
-    </CodexView>
+  </CodexView>
 
     <ItemForm
       v-if="showModal"

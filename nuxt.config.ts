@@ -3,8 +3,27 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
 
+  // ✅ Runtime config (override with NUXT_PUBLIC_API_BASE)
+  runtimeConfig: {
+    public: {
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:5035'
+    }
+  },
+
+  // ✅ CSS: keep Tailwind and add Syncfusion theme CSS
   css: [
-    '~/assets/css/tailwind.css'
+    '~/assets/css/tailwind.css',
+    // Syncfusion theme CSS (pick one theme; "material" shown here)
+    '@syncfusion/ej2-base/styles/material.css',
+    '@syncfusion/ej2-buttons/styles/material.css',
+    '@syncfusion/ej2-inputs/styles/material.css',
+    '@syncfusion/ej2-navigations/styles/material.css',
+    '@syncfusion/ej2-popups/styles/material.css',
+    '@syncfusion/ej2-splitbuttons/styles/material.css',
+    '@syncfusion/ej2-calendars/styles/material.css',
+    '@syncfusion/ej2-dropdowns/styles/material.css',
+    '@syncfusion/ej2-vue-grids/styles/material.css',
+    '@syncfusion/ej2-vue-richtexteditor/styles/material.css'
   ],
 
   postcss: {
@@ -20,36 +39,24 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/image',
     '@vueuse/nuxt',
-    '@pinia/nuxt', 
+    '@pinia/nuxt',
     [
       '@nuxtjs/color-mode',
-      {
-        classSuffix: ''
-      }
+      { classSuffix: '' }
     ]
   ],
 
   fonts: {
     families: [
-      {
-        name: 'Inter',
-        provider: 'google'
-      },
-      {
-        name: 'EB Garamond',
-        provider: 'google'
-      }
+      { name: 'Inter', provider: 'google' },
+      { name: 'EB Garamond', provider: 'google' }
     ]
   },
 
   pinia: {},
-  imports: {
-    autoImport: true
-  },
+  imports: { autoImport: true },
 
   vite: {
-    define: {
-      'process.env.DEBUG': false
-    }
+    define: { 'process.env.DEBUG': false }
   }
 })

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import SettingsModal from '@/components/SettingsModal.vue'
 
 const props = defineProps<{
   title: string
@@ -9,8 +10,11 @@ const props = defineProps<{
 }>()
 
 const isGrid = ref(true)
+const settings = ref() 
 
-const safeEntities = computed(() => Array.isArray(props.entities) ? props.entities : [])
+const safeEntities = computed(() =>
+  Array.isArray(props.entities) ? props.entities : []
+)
 </script>
 
 <template>
@@ -23,6 +27,7 @@ const safeEntities = computed(() => Array.isArray(props.entities) ? props.entiti
         <button @click="isGrid = !isGrid" class="btn-outline">
           {{ isGrid ? 'List View' : 'Grid View' }}
         </button>
+        <button @click="settings?.open()" class="btn-outline">⚙️</button>
       </div>
     </header>
 
@@ -33,6 +38,8 @@ const safeEntities = computed(() => Array.isArray(props.entities) ? props.entiti
     <div v-else :class="isGrid ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'space-y-4'">
       <slot :entities="safeEntities" />
     </div>
+
+    <SettingsModal ref="settings" />
   </section>
 </template>
 

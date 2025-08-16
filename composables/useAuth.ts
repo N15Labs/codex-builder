@@ -1,34 +1,33 @@
-import { useFirebaseAuth, useCurrentUser } from 'vuefire'
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut
-} from 'firebase/auth'
+import { useStorage } from '@vueuse/core'
 
 export function useAuth() {
-  const auth = useFirebaseAuth()
-  const currentUser = useCurrentUser()
+  const token = useStorage('auth_token', null)
+  const isAuthenticated = computed(() => !!token.value)
 
-  const login = (email: string, password: string) =>
-    signInWithEmailAndPassword(auth!, email, password)
-
-  const register = (email: string, password: string) =>
-    createUserWithEmailAndPassword(auth!, email, password)
-
-  const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider()
-    return await signInWithPopup(auth!, provider)
+  const login = async (email: string, password: string) => {
+    const response = await $fetch<{ token: string }>('/api/auth/login', {
+      method: 'POST',
+      body: { email, password },
+    })
+    token.value = response.token
   }
 
-  const logout = () => signOut(auth!)
+  const register = async (email: string, password: string) => {
+    await $fetch('/api/auth/register', {
+      method: 'POST',
+      body: { email, passwordHash: password },
+    })
+  }
+
+  const logout = () => {
+    token.value = null
+  }
 
   return {
-    currentUser,
+    token,
+    isAuthenticated,
     login,
     register,
-    loginWithGoogle,
-    logout
+    logout,
   }
 }

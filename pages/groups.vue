@@ -40,9 +40,11 @@ const saveGroup = (entity: any) => {
 
 const filteredGroups = computed(() => {
   const groups = groupStore.groups ?? []
-  if (tagStore.activeTags.length === 0) return groups
+  const active = tagStore.activeTags.groups
+  if (!active?.length) return groups
+
   return groups.filter(g =>
-    g.tags?.some(tag => tagStore.activeTags.includes(tag))
+    g.tags?.some(tag => active.includes(tag))
   )
 })
 </script>
@@ -52,7 +54,9 @@ const filteredGroups = computed(() => {
     <h2 class="text-3xl font-lore font-bold">🧑‍🤝‍🧑 Groups</h2>
     <p class="text-zinc-500 dark:text-zinc-400">Organisations, tribes, teams or factions.</p>
 
-    <TagFilter class="mb-4" />
+    <ClientOnly>
+      <TagFilter category="groups" class="mb-4" />
+    </ClientOnly>
 
     <CodexView
       title="Groups"

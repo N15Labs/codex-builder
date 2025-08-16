@@ -47,9 +47,11 @@ const saveCharacter = (entity: any) => {
 
 const filteredCharacters = computed(() => {
   const characters = characterStore.characters ?? []
-  if (tagStore.activeTags.length === 0) return characters
+  const active = tagStore.activeTags.characters
+  if (!active?.length) return characters
+
   return characters.filter(c =>
-    c.tags?.some(tag => tagStore.activeTags.includes(tag))
+    c.tags?.some(tag => active.includes(tag))
   )
 })
 </script>
@@ -61,7 +63,9 @@ const filteredCharacters = computed(() => {
       Browse and manage the characters in your world.
     </p>
 
-    <TagFilter class="mb-4" />
+    <ClientOnly>
+      <TagFilter category="characters" class="mb-4" />
+    </ClientOnly>
 
     <CodexView
       title="Characters"

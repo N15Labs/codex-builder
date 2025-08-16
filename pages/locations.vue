@@ -40,9 +40,11 @@ const saveLocation = (entity: any) => {
 
 const filteredLocations = computed(() => {
   const locations = locationStore.locations ?? []
-  if (tagStore.activeTags.length === 0) return locations
+  const active = tagStore.activeTags.locations
+  if (!active?.length) return locations
+
   return locations.filter(loc =>
-    loc.tags?.some(tag => tagStore.activeTags.includes(tag))
+    loc.tags?.some(tag => active.includes(tag))
   )
 })
 </script>
@@ -54,7 +56,9 @@ const filteredLocations = computed(() => {
       Define your world’s geography, landmarks, and key places.
     </p>
 
-    <TagFilter class="mb-4" />
+    <ClientOnly>
+      <TagFilter category="locations" class="mb-4" />
+    </ClientOnly>
 
     <CodexView
       title="Locations"
