@@ -9,7 +9,6 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      // Use a production-ready API URL or fallback to localhost for development
       apiBase: process.env.NUXT_PUBLIC_API_BASE || (process.env.NODE_ENV === 'production' ? 'https://your-api-domain.com' : 'http://localhost:5035')
     }
   },

@@ -28,7 +28,6 @@ if (process.client) {
       {{ tag }}
     </span>
 
-    <!-- Optional Clear Button -->
     <button
       v-if="tagStore?.activeTags?.[props.category]?.length"
       @click="tagStore.clear(props.category)"

@@ -12,7 +12,6 @@ let drawProgress = 0
 const drawSpeed = 0.3 
 let currentIndex = 0
 
-// CONFIG
 const LINE_HEIGHT = 48
 const WORD_SPACING = 18
 const CHAR_WIDTH = 16

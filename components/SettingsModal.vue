@@ -46,7 +46,6 @@ import { useItemStore } from '@/stores/useItemStore'
 import { useGroupStore } from '@/stores/useGroupStore'
 import { useLocationStore } from '@/stores/useLocationStore'
 
-// Replace useTheme with useColorMode
 const colorMode = useColorMode()
 
 const modal = ref<HTMLDialogElement>()

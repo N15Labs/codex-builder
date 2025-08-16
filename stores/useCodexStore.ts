@@ -3,7 +3,7 @@ import { useApi } from '@/composables/useApi'
 
 export const useCodexStore = defineStore('codex', {
   state: () => ({
-    codexes: [] as any[],
+    codexes: [] as { id: string; name: string }[],
     currentCodexId: null as string | null,
   }),
   actions: {
