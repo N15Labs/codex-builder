@@ -12,7 +12,7 @@
 
       <label class="w-full flex flex-col gap-1">
         <span>📥 Import Codex (JSON)</span>
-        <input type="file" accept="application/json" class="text-sm" @change="handleImport" />
+        <input type="file" accept="application/json" class="text-sm" aria-label="Import codex JSON file" @change="handleImport">
       </label>
 
       <button class="btn w-full border border-zinc-300" @click="exportJSON">
@@ -20,7 +20,7 @@
       </button>
 
       <button class="btn w-full border border-zinc-300" @click="toggleTheme">
-        🌓 Toggle Theme ({{ theme.value === 'dark' ? 'Dark' : 'Light' }})
+        🌓 Toggle Theme ({{ colorMode.value === 'dark' ? 'Dark' : 'Light' }})
       </button>
 
       <button
@@ -39,19 +39,19 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useTheme } from '@vueuse/core'
 import { useAuth } from '@/composables/useAuth'
 import { useCodexSync } from '@/composables/useCodexSync'
-
 import { useCharacterStore } from '@/stores/useCharacterStore'
 import { useItemStore } from '@/stores/useItemStore'
 import { useGroupStore } from '@/stores/useGroupStore'
 import { useLocationStore } from '@/stores/useLocationStore'
 
+// Replace useTheme with useColorMode
+const colorMode = useColorMode()
+
 const modal = ref<HTMLDialogElement>()
-const theme = useTheme()
 const { logout } = useAuth()
-const { loadAll, saveAll } = useCodexSync()
+const { loadAll } = useCodexSync()
 
 const open = () => modal.value?.showModal()
 const close = () => modal.value?.close()
@@ -126,13 +126,13 @@ const handleImport = (e: Event) => {
 }
 
 const toggleTheme = () => {
-  theme.value = theme.value === 'dark' ? 'light' : 'dark'
+  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
 }
 
 const clearLocal = () => {
   localStorage.clear()
   alert('Local storage cleared.')
-  location.reload()
+  window.location.reload()
 }
 </script>
 
