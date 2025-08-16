@@ -675,7 +675,12 @@
     "zod": "^4.0.10"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
   },
   "keywords": [],
   "author": "",
@@ -687,5 +692,8 @@
     "prettier": "^3.6.2",
     "tailwindcss": "^4.1.12",
     "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.17.0 <23"
   }
 }
