@@ -1,9 +1,16 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
+  nitro: {
+    preset: 'vercel',
+    experimental: {
+      wasm: true
+    }
+  },
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:5035'
+      // Use a production-ready API URL or fallback to localhost for development
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || (process.env.NODE_ENV === 'production' ? 'https://your-api-domain.com' : 'http://localhost:5035')
     }
   },
   css: [

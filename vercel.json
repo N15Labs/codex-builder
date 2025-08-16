@@ -1,0 +1,13 @@
+{
+  "functions": {
+    ".nuxt/output/**": {
+      "maxDuration": 30
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/health",
+      "dest": "/.nuxt/output/server/index.mjs"
+    }
+  ]
+}
