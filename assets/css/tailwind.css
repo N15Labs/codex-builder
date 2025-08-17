@@ -1,3 +1,18 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-background text-foreground;
+  }
+  body {
+    @apply antialiased;
+  }
+  a {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring;
+  }
+}
